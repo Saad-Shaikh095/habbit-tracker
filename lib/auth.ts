@@ -2,18 +2,24 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
 const COOKIE_NAME = "habit_session";
-const secret = () => new TextEncoder().encode(process.env.JWT_SECRET);
+
+function getJwtSecret() {
+  const jwtSecret = process.env.JWT_SECRET;
+  if (!jwtSecret) throw new Error("Missing JWT_SECRET environment variable");
+  return new TextEncoder().encode(jwtSecret);
+}
 
 export type Session = { userId: string; email: string; name: string };
 
 export async function createToken(session: Session) {
-  return new SignJWT(session).setProtectedHeader({ alg: "HS256" }).setIssuedAt().setExpirationTime("7d").sign(secret());
+  return new SignJWT(session).setProtectedHeader({ alg: "HS256" }).setIssuedAt().setExpirationTime("7d").sign(getJwtSecret());
 }
 export async function getSession(): Promise<Session | null> {
+  const token = (await cookies()).get(COOKIE_NAME)?.value;
+  if (!token) return null;
+  const jwtSecret = getJwtSecret();
   try {
-    const token = (await cookies()).get(COOKIE_NAME)?.value;
-    if (!token) return null;
-    const { payload } = await jwtVerify(token, secret());
+    const { payload } = await jwtVerify(token, jwtSecret);
     if (typeof payload.userId !== "string" || typeof payload.email !== "string" || typeof payload.name !== "string") return null;
     return { userId: payload.userId, email: payload.email, name: payload.name };
   } catch { return null; }

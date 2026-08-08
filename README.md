@@ -1,11 +1,11 @@
 # Habitly
 
-A full-stack daily habit tracker built with Next.js, TypeScript, Tailwind CSS, Prisma, SQLite, Recharts, and JWT authentication.
+A full-stack daily habit tracker built with Next.js, TypeScript, Tailwind CSS, Prisma, PostgreSQL, Recharts, and JWT authentication.
 
 ## Architecture
 
 - **Next.js App Router** supplies the React UI and route handlers.
-- **Prisma** persists users, habits, and date-level completion records. SQLite is configured for local development; switch `provider` and `DATABASE_URL` in `prisma/schema.prisma` for PostgreSQL deployment.
+- **Prisma** persists users, habits, and date-level completion records using PostgreSQL.
 - **Auth** hashes passwords with bcrypt and stores a signed, 7-day JWT only in an HTTP-only, SameSite cookie. API handlers independently enforce the session, while middleware protects the dashboard navigation route.
 - The client dashboard calls protected APIs, keeps optimistic UI updates small and reversible, and calculates daily/weekly/monthly/yearly reporting from saved records.
 
@@ -32,12 +32,12 @@ middleware.ts  .env.example  package.json
 ## Run locally
 
 1. Install Node.js 20.9 or newer.
-2. Copy `.env.example` to `.env` and replace `JWT_SECRET` with a random value at least 32 characters long.
+2. Copy `.env.example` to `.env`, replace `JWT_SECRET` with a random value at least 32 characters long, and set `DATABASE_URL` to your PostgreSQL connection string.
 3. Run `npm install`.
 4. Run `npm run db:generate`.
-5. Run `npm run db:migrate` (choose a migration name if prompted, or use the included migration with `npx prisma migrate deploy`).
+5. Run `npx prisma migrate deploy`.
 6. Run `npm run dev` and open `http://localhost:3000`.
 
 ## Production notes
 
-Set a strong `JWT_SECRET`, use a managed PostgreSQL connection, update the Prisma datasource provider to `postgresql`, run `npx prisma migrate deploy`, and deploy behind HTTPS. Secure cookies are automatically enabled when `NODE_ENV=production`.
+Set a strong `JWT_SECRET`, use a managed PostgreSQL connection, run `npx prisma migrate deploy`, and deploy behind HTTPS. Secure cookies are automatically enabled when `NODE_ENV=production`.

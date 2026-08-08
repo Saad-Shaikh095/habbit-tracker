@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -30,7 +30,7 @@ model Habit {
 model Completion {
   id        String   @id @default(cuid())
   habitId   String
-  date      DateTime
+  date      DateTime @db.Date
   completed Boolean  @default(true)
   habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
 
