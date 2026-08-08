@@ -1,6 +1,6 @@
 # Habitly
 
-A full-stack daily habit tracker built with Next.js, TypeScript, Tailwind CSS, Prisma, SQLite, Recharts, and JWT authentication.
+A full-stack daily habit tracker built with Next.js, TypeScript, Tailwind CSS, Prisma, PostgreSQL, Recharts, and JWT authentication.
 
 ## Architecture
 

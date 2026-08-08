@@ -18,7 +18,7 @@ CREATE TABLE "Habit" (
 CREATE TABLE "Completion" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "habitId" TEXT NOT NULL,
-    "date" TIMESTAMP(3) NOT NULL,
+    "date" DATE NOT NULL,
     "completed" BOOLEAN NOT NULL DEFAULT true,
     CONSTRAINT "Completion_habitId_fkey" FOREIGN KEY ("habitId") REFERENCES "Habit" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
