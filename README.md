@@ -5,7 +5,7 @@ A full-stack daily habit tracker built with Next.js, TypeScript, Tailwind CSS, P
 ## Architecture
 
 - **Next.js App Router** supplies the React UI and route handlers.
-- **Prisma** stores users, habits, and date-level completion records in a local SQLite database for development.
+- **Prisma** stores users, habits, and date-level completion records in a database configured through `DATABASE_URL`.
 - **Auth** hashes passwords with bcrypt and stores a signed, 7-day JWT in an HTTP-only cookie. API handlers enforce the session, while middleware protects the dashboard route.
 - The dashboard calls protected APIs and calculates daily, weekly, monthly, and yearly progress from persisted records.
 
@@ -24,7 +24,7 @@ components/
 lib/
   api.ts  auth.ts  prisma.ts  utils.ts
 prisma/
-  migrations/20260807000000_init/migration.sql
+  migrations/20260809000000_init_postgres/migration.sql
   schema.prisma
 middleware.ts  .env.example  package.json
 ```
@@ -39,11 +39,11 @@ middleware.ts  .env.example  package.json
 3. Create a local environment file named `.env.local` with:
    ```env
    JWT_SECRET="replace-with-a-random-secret-at-least-32-characters-long"
-   DATABASE_URL="file:./dev.db"
+   DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DATABASE?sslmode=disable"
    ```
 4. Create the local database schema:
    ```bash
-   npx prisma db push
+   npx prisma migrate dev
    ```
 5. Start the development server:
    ```bash
@@ -73,8 +73,8 @@ middleware.ts  .env.example  package.json
    ```
 7. Deploy the project from Vercel. The build is already configured to run `prisma generate` and `prisma migrate deploy` through the existing Vercel build script.
 
-> The local setup uses SQLite for convenience, but Vercel cannot use a local SQLite file. For production, use PostgreSQL.
+> The local setup can use a local PostgreSQL database, but Vercel requires a remote PostgreSQL connection string via `DATABASE_URL`.
 
 ## Production notes
 
-For production, use a strong `JWT_SECRET` and a managed PostgreSQL connection. If you switch to PostgreSQL, update the Prisma datasource and database URL accordingly.
+For production, use a strong `JWT_SECRET` and a managed PostgreSQL connection. The Prisma datasource is already configured for PostgreSQL via `DATABASE_URL`.
