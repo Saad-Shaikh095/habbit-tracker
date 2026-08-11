@@ -1,7 +1,7 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
-const COOKIE_NAME = "habit_session";
+export const COOKIE_NAME = "habit_session";
 const secret = () => new TextEncoder().encode(process.env.JWT_SECRET);
 
 export type Session = { userId: string; email: string; name: string };
@@ -18,7 +18,20 @@ export async function getSession(): Promise<Session | null> {
     return { userId: payload.userId, email: payload.email, name: payload.name };
   } catch { return null; }
 }
-export function sessionCookie(token: string) {
-  return { name: COOKIE_NAME, value: token, httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax" as const, path: "/", maxAge: 60 * 60 * 24 * 7 };
+export function sessionCookieOptions() {
+  return {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax" as const,
+    path: "/",
+    maxAge: 60 * 60 * 24 * 7
+  };
 }
-export function clearSessionCookie() { return { name: COOKIE_NAME, value: "", httpOnly: true, path: "/", maxAge: 0 }; }
+
+export function clearSessionCookieOptions() {
+  return {
+    httpOnly: true,
+    path: "/",
+    maxAge: 0
+  };
+}
